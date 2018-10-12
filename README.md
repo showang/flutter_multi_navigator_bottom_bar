@@ -2,7 +2,7 @@
 
 # multi_navigator_bottom_bar
 
-Helps you to build multi-navigator bottom bar easiler.
+Helps you to build multi-navigator bottom navigation bar more easily.
 
 # Usage
 
