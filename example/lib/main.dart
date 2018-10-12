@@ -24,21 +24,24 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  var currentTabIndex = 0;
+  static final tabSize = 4;
   final List<GlobalKey<NavigatorState>> navigatorKeys =
-      List.generate(4, (index) => GlobalKey<NavigatorState>());
+      List.generate(tabSize, (index) => GlobalKey<NavigatorState>());
+  var currentTabIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return MultiNavigatorBottomBar(
         currentTabIndex: currentTabIndex,
         tabs: List.generate(
-            4, (index) => createTab(navigatorKeys[index], index.toString())));
+          tabSize,
+          (index) => createTab(navigatorKeys[index], index.toString()),
+        ));
   }
 
   BottomBarTab createTab(GlobalKey<NavigatorState> key, String name) {
     return BottomBarTab(
-        navigatorKey: key,
+        navigatorKey: key,                // Single key instance for each tab.
         initPage: Page(name),
         tabIcon: Icon(Icons.add),
         tabTitle: Text("Tab $name"));
