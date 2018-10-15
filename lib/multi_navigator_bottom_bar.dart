@@ -43,8 +43,6 @@ class _MultiNavigatorBottomBarState extends State<MultiNavigatorBottomBar> {
 
   _MultiNavigatorBottomBarState(this.currentIndex);
 
-  tabs() => widget.tabs;
-
   @override
   Widget build(BuildContext context) => WillPopScope(
         onWillPop: () async => !await widget
@@ -59,7 +57,8 @@ class _MultiNavigatorBottomBarState extends State<MultiNavigatorBottomBar> {
       );
 
   Widget _buildPageBody() => Stack(
-        children: tabs().map((tab) => _buildOffstageNavigator(tab)).toList(),
+        children:
+        widget.tabs.map((tab) => _buildOffstageNavigator(tab)).toList(),
       );
 
   Widget _buildOffstageNavigator(BottomBarTab tab) => Offstage(

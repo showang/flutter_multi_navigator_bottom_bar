@@ -49,7 +49,7 @@ Add this to your package's pubspec.yaml file:
 
 ```yaml
 dependencies:
-  multi_navigator_bottom_bar: ^0.0.5
+  multi_navigator_bottom_bar: ^0.0.6
 ```
 
 ## 2. Install it
