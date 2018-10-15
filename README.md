@@ -13,7 +13,7 @@ class _MyHomePageState extends State<MyHomePage> {
   var tabs = List.generate(
     tabSize,
     (index) => BottomBarTab(
-          initPageBuilder: (_) => Page(index.toString()),
+          initPage: Page(index.toString()),
           tabIconBuilder: (_) => Icon(Icons.add),
           tabTitleBuilder: (_) => Text("Tab ${index.toString()}"),
         ),
@@ -49,7 +49,7 @@ Add this to your package's pubspec.yaml file:
 
 ```yaml
 dependencies:
-  multi_navigator_bottom_bar: ^0.0.4
+  multi_navigator_bottom_bar: ^0.0.5
 ```
 
 ## 2. Install it

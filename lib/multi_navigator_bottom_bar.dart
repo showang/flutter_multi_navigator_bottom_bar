@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 
 class BottomBarTab {
   final WidgetBuilder routePageBuilder;
-  final WidgetBuilder initPageBuilder;
+  final Widget initPage;
   final WidgetBuilder tabIconBuilder;
   final WidgetBuilder tabTitleBuilder;
   final GlobalKey<NavigatorState> _navigatorKey;
 
   BottomBarTab({
-    @required this.initPageBuilder,
+    @required this.initPage,
     @required this.tabIconBuilder,
     this.tabTitleBuilder,
     this.routePageBuilder,
@@ -23,7 +23,7 @@ class MultiNavigatorBottomBar extends StatefulWidget {
   final int initTabIndex;
   final List<BottomBarTab> tabs;
   final PageRoute pageRoute;
-  final bool Function(int) onTap;
+  final ValueChanged<int> onTap;
   final Widget Function(Widget) pageWidgetDecorator;
 
   MultiNavigatorBottomBar(
@@ -43,6 +43,8 @@ class _MultiNavigatorBottomBarState extends State<MultiNavigatorBottomBar> {
 
   _MultiNavigatorBottomBarState(this.currentIndex);
 
+  tabs() => widget.tabs;
+
   @override
   Widget build(BuildContext context) => WillPopScope(
         onWillPop: () async => !await widget
@@ -57,35 +59,31 @@ class _MultiNavigatorBottomBarState extends State<MultiNavigatorBottomBar> {
       );
 
   Widget _buildPageBody() => Stack(
-      children:
-          widget.tabs.map((tab) => _buildOffstageNavigator(tab)).toList());
+        children: tabs().map((tab) => _buildOffstageNavigator(tab)).toList(),
+      );
 
-  Widget _buildOffstageNavigator(BottomBarTab tab) {
-    return Offstage(
-      offstage: widget.tabs.indexOf(tab) != currentIndex,
-      child: TabPageNavigator(
-        navigatorKey: tab._navigatorKey,
-        initPage: tab.initPageBuilder(context),
-        pageRoute: widget.pageRoute,
-      ),
-    );
-  }
+  Widget _buildOffstageNavigator(BottomBarTab tab) => Offstage(
+        offstage: widget.tabs.indexOf(tab) != currentIndex,
+        child: TabPageNavigator(
+          navigatorKey: tab._navigatorKey,
+          initPage: tab.initPage,
+          pageRoute: widget.pageRoute,
+        ),
+      );
 
-  Widget _buildBottomBar() {
-    return BottomNavigationBar(
-      items: widget.tabs
-          .map((tab) => BottomNavigationBarItem(
-                icon: tab.tabIconBuilder(context),
-                title: tab.tabTitleBuilder(context),
-              ))
-          .toList(),
-      onTap: (index) {
-        if (widget.onTap == null || !widget.onTap(index))
+  Widget _buildBottomBar() => BottomNavigationBar(
+        items: widget.tabs
+            .map((tab) => BottomNavigationBarItem(
+                  icon: tab.tabIconBuilder(context),
+                  title: tab.tabTitleBuilder(context),
+                ))
+            .toList(),
+        onTap: (index) {
+          if (widget.onTap != null) widget.onTap(index);
           setState(() => currentIndex = index);
-      },
-      currentIndex: currentIndex,
-    );
-  }
+        },
+        currentIndex: currentIndex,
+      );
 }
 
 class TabPageNavigator extends StatelessWidget {
@@ -107,7 +105,6 @@ class TabPageNavigator extends StatelessWidget {
             ),
       );
 
-  WidgetBuilder _defaultPageRouteBuilder(String routName, {String heroTag}) {
-    return (context) => initPage;
-  }
+  WidgetBuilder _defaultPageRouteBuilder(String routName, {String heroTag}) =>
+      (context) => initPage;
 }
