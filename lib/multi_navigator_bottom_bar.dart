@@ -20,14 +20,14 @@ class BottomBarTab {
 }
 
 class MultiNavigatorBottomBar extends StatefulWidget {
-  final int currentTabIndex;
+  final int initTabIndex;
   final List<BottomBarTab> tabs;
   final PageRoute pageRoute;
-  final ValueChanged<int> onTap;
+  final bool Function(int) onTap;
   final Widget Function(Widget) pageWidgetDecorator;
 
   MultiNavigatorBottomBar(
-      {@required this.currentTabIndex,
+      {@required this.initTabIndex,
       @required this.tabs,
       this.onTap,
       this.pageRoute,
@@ -35,7 +35,7 @@ class MultiNavigatorBottomBar extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() =>
-      _MultiNavigatorBottomBarState(currentTabIndex);
+      _MultiNavigatorBottomBarState(initTabIndex);
 }
 
 class _MultiNavigatorBottomBarState extends State<MultiNavigatorBottomBar> {
@@ -56,14 +56,9 @@ class _MultiNavigatorBottomBarState extends State<MultiNavigatorBottomBar> {
         ),
       );
 
-  Widget _buildPageBody() {
-    List<Widget> navigators = [];
-    for (BottomBarTab tab in widget.tabs) {
-      navigators.add(_buildOffstageNavigator(tab));
-    }
-
-    return Stack(children: navigators);
-  }
+  Widget _buildPageBody() => Stack(
+      children:
+          widget.tabs.map((tab) => _buildOffstageNavigator(tab)).toList());
 
   Widget _buildOffstageNavigator(BottomBarTab tab) {
     return Offstage(
@@ -84,7 +79,10 @@ class _MultiNavigatorBottomBarState extends State<MultiNavigatorBottomBar> {
                 title: tab.tabTitleBuilder(context),
               ))
           .toList(),
-      onTap: widget.onTap ?? (index) => setState(() => currentIndex = index),
+      onTap: (index) {
+        if (widget.onTap == null || !widget.onTap(index))
+          setState(() => currentIndex = index);
+      },
       currentIndex: currentIndex,
     );
   }
