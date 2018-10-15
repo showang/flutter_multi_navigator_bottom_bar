@@ -5,18 +5,18 @@ import 'package:flutter/material.dart';
 
 class BottomBarTab {
   final WidgetBuilder routePageBuilder;
-  final GlobalKey<NavigatorState> navigatorKey;
-  final Widget initPage;
-  final Widget tabIcon;
-  final Widget tabTitle;
+  final WidgetBuilder initPageBuilder;
+  final WidgetBuilder tabIconBuilder;
+  final WidgetBuilder tabTitleBuilder;
+  final GlobalKey<NavigatorState> _navigatorKey;
 
   BottomBarTab({
-    @required this.navigatorKey,
-    @required this.initPage,
-    @required this.tabIcon,
-    this.tabTitle,
+    @required this.initPageBuilder,
+    @required this.tabIconBuilder,
+    this.tabTitleBuilder,
     this.routePageBuilder,
-  });
+    GlobalKey<NavigatorState> navigatorKey,
+  }) : _navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>();
 }
 
 class MultiNavigatorBottomBar extends StatefulWidget {
@@ -44,7 +44,7 @@ class _MultiNavigatorBottomBarState extends State<MultiNavigatorBottomBar> {
   @override
   Widget build(BuildContext context) => WillPopScope(
         onWillPop: () async => !await widget
-            .tabs[currentIndex].navigatorKey.currentState
+            .tabs[currentIndex]._navigatorKey.currentState
             .maybePop(),
         child: Scaffold(
           body: _buildPageBody(),
@@ -65,8 +65,8 @@ class _MultiNavigatorBottomBarState extends State<MultiNavigatorBottomBar> {
     return Offstage(
       offstage: widget.tabs.indexOf(tab) != currentIndex,
       child: TabPageNavigator(
-        navigatorKey: tab.navigatorKey,
-        initPage: tab.initPage,
+        navigatorKey: tab._navigatorKey,
+        initPage: tab.initPageBuilder(context),
         pageRoute: widget.pageRoute,
       ),
     );
@@ -75,8 +75,10 @@ class _MultiNavigatorBottomBarState extends State<MultiNavigatorBottomBar> {
   Widget _buildBottomBar() {
     return BottomNavigationBar(
       items: widget.tabs
-          .map((tab) =>
-              BottomNavigationBarItem(icon: tab.tabIcon, title: tab.tabTitle))
+          .map((tab) => BottomNavigationBarItem(
+                icon: tab.tabIconBuilder(context),
+                title: tab.tabTitleBuilder(context),
+              ))
           .toList(),
       onTap: widget.onTap ?? (index) => setState(() => currentIndex = index),
       currentIndex: currentIndex,
