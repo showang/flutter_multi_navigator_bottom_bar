@@ -6,33 +6,24 @@ Helps you to build multi-navigator bottom navigation bar more easily.
 
 # Usage
 
-There is an example app in the repo. Part of usage:
+There is an example app in the repo. Part of the main scenario:
 ```dart
 class _MyHomePageState extends State<MyHomePage> {
   static final tabSize = 4;
-  final List<GlobalKey<NavigatorState>> navigatorKeys =
-      List.generate(tabSize, (index) => GlobalKey<NavigatorState>());
   var currentTabIndex = 0;
+  var tabs = List.generate(
+    tabSize,
+    (index) => BottomBarTab(
+          initPageBuilder: (_) => Page(index.toString()),
+          tabIconBuilder: (_) => Icon(Icons.add),
+          tabTitleBuilder: (_) => Text("Tab ${index.toString()}"),
+        ),
+  );
 
   @override
-  Widget build(BuildContext context) {
-    return MultiNavigatorBottomBar(
-        currentTabIndex: currentTabIndex,
-        tabs: List.generate(
-          tabSize,
-          (index) => createTab(navigatorKeys[index], index.toString()),
-        ));
-  }
-
-  BottomBarTab createTab(GlobalKey<NavigatorState> key, String name) {
-    return BottomBarTab(
-        navigatorKey: key,
-        initPage: Page(name),
-        tabIcon: Icon(Icons.add),
-        tabTitle: Text("Tab $name"));
-  }
+  Widget build(BuildContext context) =>
+      MultiNavigatorBottomBar(currentTabIndex: currentTabIndex, tabs: tabs);
 }
-
 ```
 
 # Use this package as a library
@@ -41,7 +32,7 @@ Add this to your package's pubspec.yaml file:
 
 ```yaml
 dependencies:
-  multi_navigator_bottom_bar: ^0.0.1
+  multi_navigator_bottom_bar: ^0.0.2
 ```
 
 ## 2. Install it
