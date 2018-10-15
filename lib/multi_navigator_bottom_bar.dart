@@ -24,12 +24,14 @@ class MultiNavigatorBottomBar extends StatefulWidget {
   final List<BottomBarTab> tabs;
   final PageRoute pageRoute;
   final ValueChanged<int> onTap;
+  final Widget Function(Widget) pageWidgetDecorator;
 
   MultiNavigatorBottomBar(
       {@required this.currentTabIndex,
       @required this.tabs,
       this.onTap,
-      this.pageRoute});
+      this.pageRoute,
+      this.pageWidgetDecorator});
 
   @override
   State<StatefulWidget> createState() =>
@@ -47,7 +49,9 @@ class _MultiNavigatorBottomBarState extends State<MultiNavigatorBottomBar> {
             .tabs[currentIndex]._navigatorKey.currentState
             .maybePop(),
         child: Scaffold(
-          body: _buildPageBody(),
+          body: widget.pageWidgetDecorator == null
+              ? _buildPageBody()
+              : widget.pageWidgetDecorator(_buildPageBody()),
           bottomNavigationBar: _buildBottomBar(),
         ),
       );
