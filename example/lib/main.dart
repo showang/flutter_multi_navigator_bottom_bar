@@ -36,6 +36,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) => MultiNavigatorBottomBar(
+        type: BottomNavigationBarType.fixed,
         initTabIndex: 0,
         pageWidgetDecorator: pageDecorator,
         tabs: tabs,

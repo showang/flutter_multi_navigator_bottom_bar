@@ -25,13 +25,20 @@ class MultiNavigatorBottomBar extends StatefulWidget {
   final PageRoute pageRoute;
   final ValueChanged<int> onTap;
   final Widget Function(Widget) pageWidgetDecorator;
+  final BottomNavigationBarType type;
+  final Color fixedColor;
+  final double iconSize;
 
-  MultiNavigatorBottomBar(
-      {@required this.initTabIndex,
-      @required this.tabs,
-      this.onTap,
-      this.pageRoute,
-      this.pageWidgetDecorator});
+  MultiNavigatorBottomBar({
+    @required this.initTabIndex,
+    @required this.tabs,
+    this.onTap,
+    this.pageRoute,
+    this.pageWidgetDecorator,
+    this.type,
+    this.fixedColor,
+    this.iconSize = 24.0,
+  });
 
   @override
   State<StatefulWidget> createState() =>
@@ -58,7 +65,7 @@ class _MultiNavigatorBottomBarState extends State<MultiNavigatorBottomBar> {
 
   Widget _buildPageBody() => Stack(
         children:
-        widget.tabs.map((tab) => _buildOffstageNavigator(tab)).toList(),
+            widget.tabs.map((tab) => _buildOffstageNavigator(tab)).toList(),
       );
 
   Widget _buildOffstageNavigator(BottomBarTab tab) => Offstage(
@@ -71,6 +78,8 @@ class _MultiNavigatorBottomBarState extends State<MultiNavigatorBottomBar> {
       );
 
   Widget _buildBottomBar() => BottomNavigationBar(
+        type: widget.type,
+        fixedColor: widget.fixedColor,
         items: widget.tabs
             .map((tab) => BottomNavigationBarItem(
                   icon: tab.tabIconBuilder(context),
