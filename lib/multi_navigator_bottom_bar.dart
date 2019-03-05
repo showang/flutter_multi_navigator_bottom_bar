@@ -107,6 +107,7 @@ class TabPageNavigator extends StatelessWidget {
               builder: (context) =>
                   _defaultPageRouteBuilder(routeSettings.name)(context),
             ),
+        observers: [HeroController()],
       );
 
   WidgetBuilder _defaultPageRouteBuilder(String routName, {String heroTag}) {
