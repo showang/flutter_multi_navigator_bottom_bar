@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 
 class BottomBarTab {
   final WidgetBuilder routePageBuilder;
-  final WidgetBuilder initPageBuilder;
+  final Widget initPage;
   final WidgetBuilder tabIconBuilder;
   final WidgetBuilder tabTitleBuilder;
   final GlobalKey<NavigatorState> _navigatorKey;
 
   BottomBarTab({
-    @required this.initPageBuilder,
+    @required this.initPage,
     @required this.tabIconBuilder,
     this.tabTitleBuilder,
     this.routePageBuilder,
@@ -20,22 +20,29 @@ class BottomBarTab {
 }
 
 class MultiNavigatorBottomBar extends StatefulWidget {
-  final int currentTabIndex;
+  final int initTabIndex;
   final List<BottomBarTab> tabs;
   final PageRoute pageRoute;
   final ValueChanged<int> onTap;
   final Widget Function(Widget) pageWidgetDecorator;
+  final BottomNavigationBarType type;
+  final Color fixedColor;
+  final double iconSize;
 
-  MultiNavigatorBottomBar(
-      {@required this.currentTabIndex,
-      @required this.tabs,
-      this.onTap,
-      this.pageRoute,
-      this.pageWidgetDecorator});
+  MultiNavigatorBottomBar({
+    @required this.initTabIndex,
+    @required this.tabs,
+    this.onTap,
+    this.pageRoute,
+    this.pageWidgetDecorator,
+    this.type,
+    this.fixedColor,
+    this.iconSize = 24.0,
+  });
 
   @override
   State<StatefulWidget> createState() =>
-      _MultiNavigatorBottomBarState(currentTabIndex);
+      _MultiNavigatorBottomBarState(initTabIndex);
 }
 
 class _MultiNavigatorBottomBarState extends State<MultiNavigatorBottomBar> {
@@ -56,38 +63,35 @@ class _MultiNavigatorBottomBarState extends State<MultiNavigatorBottomBar> {
         ),
       );
 
-  Widget _buildPageBody() {
-    List<Widget> navigators = [];
-    for (BottomBarTab tab in widget.tabs) {
-      navigators.add(_buildOffstageNavigator(tab));
-    }
+  Widget _buildPageBody() => Stack(
+        children:
+            widget.tabs.map((tab) => _buildOffstageNavigator(tab)).toList(),
+      );
 
-    return Stack(children: navigators);
-  }
+  Widget _buildOffstageNavigator(BottomBarTab tab) => Offstage(
+        offstage: widget.tabs.indexOf(tab) != currentIndex,
+        child: TabPageNavigator(
+          navigatorKey: tab._navigatorKey,
+          initPage: tab.initPage,
+          pageRoute: widget.pageRoute,
+        ),
+      );
 
-  Widget _buildOffstageNavigator(BottomBarTab tab) {
-    return Offstage(
-      offstage: widget.tabs.indexOf(tab) != currentIndex,
-      child: TabPageNavigator(
-        navigatorKey: tab._navigatorKey,
-        initPage: tab.initPageBuilder(context),
-        pageRoute: widget.pageRoute,
-      ),
-    );
-  }
-
-  Widget _buildBottomBar() {
-    return BottomNavigationBar(
-      items: widget.tabs
-          .map((tab) => BottomNavigationBarItem(
-                icon: tab.tabIconBuilder(context),
-                title: tab.tabTitleBuilder(context),
-              ))
-          .toList(),
-      onTap: widget.onTap ?? (index) => setState(() => currentIndex = index),
-      currentIndex: currentIndex,
-    );
-  }
+  Widget _buildBottomBar() => BottomNavigationBar(
+        type: widget.type,
+        fixedColor: widget.fixedColor,
+        items: widget.tabs
+            .map((tab) => BottomNavigationBarItem(
+                  icon: tab.tabIconBuilder(context),
+                  title: tab.tabTitleBuilder(context),
+                ))
+            .toList(),
+        onTap: (index) {
+          if (widget.onTap != null) widget.onTap(index);
+          setState(() => currentIndex = index);
+        },
+        currentIndex: currentIndex,
+      );
 }
 
 class TabPageNavigator extends StatelessWidget {
@@ -101,16 +105,15 @@ class TabPageNavigator extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Navigator(
         key: navigatorKey,
+        observers: [HeroController()],
         onGenerateRoute: (routeSettings) =>
             pageRoute ??
             MaterialPageRoute(
               builder: (context) =>
                   _defaultPageRouteBuilder(routeSettings.name)(context),
             ),
-        observers: [HeroController()],
       );
 
-  WidgetBuilder _defaultPageRouteBuilder(String routName, {String heroTag}) {
-    return (context) => initPage;
-  }
+  WidgetBuilder _defaultPageRouteBuilder(String routName, {String heroTag}) =>
+      (context) => initPage;
 }

@@ -25,20 +25,22 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   static final tabSize = 4;
-  var currentTabIndex = 0;
+  var tabs = List.generate(
+    tabSize,
+    (index) => BottomBarTab(
+          initPage: Page(index.toString()),
+          tabIconBuilder: (_) => Icon(Icons.add),
+          tabTitleBuilder: (_) => Text("Tab ${index.toString()}"),
+        ),
+  );
 
   @override
   Widget build(BuildContext context) => MultiNavigatorBottomBar(
-      currentTabIndex: currentTabIndex,
-      pageWidgetDecorator: pageDecorator,
-      tabs: List.generate(
-        tabSize,
-        (index) => BottomBarTab(
-              initPageBuilder: (_) => Page(index.toString()),
-              tabIconBuilder: (_) => Icon(Icons.add),
-              tabTitleBuilder: (_) => Text("Tab ${index.toString()}"),
-            ),
-      ));
+        type: BottomNavigationBarType.fixed,
+        initTabIndex: 0,
+        pageWidgetDecorator: pageDecorator,
+        tabs: tabs,
+      );
 
   Widget pageDecorator(pageWidget) => Column(
         children: <Widget>[

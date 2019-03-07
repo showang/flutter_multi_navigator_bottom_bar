@@ -10,20 +10,21 @@ There is an example app in the repo. Part of the main scenario:
 ```dart
 class _MyHomePageState extends State<MyHomePage> {
   static final tabSize = 4;
-  var currentTabIndex = 0;
+  var tabs = List.generate(
+    tabSize,
+    (index) => BottomBarTab(
+          initPage: Page(index.toString()),
+          tabIconBuilder: (_) => Icon(Icons.add),
+          tabTitleBuilder: (_) => Text("Tab ${index.toString()}"),
+        ),
+  );
 
   @override
   Widget build(BuildContext context) => MultiNavigatorBottomBar(
-      currentTabIndex: currentTabIndex,
-      pageWidgetDecorator: pageDecorator,
-      tabs: List.generate(
-        tabSize,
-        (index) => BottomBarTab(
-              initPageBuilder: (_) => Page(index.toString()),
-              tabIconBuilder: (_) => Icon(Icons.add),
-              tabTitleBuilder: (_) => Text("Tab ${index.toString()}"),
-            ),
-      ));
+        initTabIndex: 0,
+        pageWidgetDecorator: pageDecorator,
+        tabs: tabs,
+      );
 
   Widget pageDecorator(pageWidget) => Column(
         children: <Widget>[
@@ -48,7 +49,7 @@ Add this to your package's pubspec.yaml file:
 
 ```yaml
 dependencies:
-  multi_navigator_bottom_bar: ^0.0.3
+  multi_navigator_bottom_bar: ^0.0.7
 ```
 
 ## 2. Install it
