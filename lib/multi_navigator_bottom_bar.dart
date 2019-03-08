@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 
 class BottomBarTab {
   final WidgetBuilder routePageBuilder;
-  final Widget initPage;
+  final WidgetBuilder initPageBuilder;
   final WidgetBuilder tabIconBuilder;
   final WidgetBuilder tabTitleBuilder;
   final GlobalKey<NavigatorState> _navigatorKey;
 
   BottomBarTab({
-    @required this.initPage,
+    @required this.initPageBuilder,
     @required this.tabIconBuilder,
     this.tabTitleBuilder,
     this.routePageBuilder,
@@ -72,7 +72,7 @@ class _MultiNavigatorBottomBarState extends State<MultiNavigatorBottomBar> {
         offstage: widget.tabs.indexOf(tab) != currentIndex,
         child: TabPageNavigator(
           navigatorKey: tab._navigatorKey,
-          initPage: tab.initPage,
+          initPageBuilder: tab.initPageBuilder,
           pageRoute: widget.pageRoute,
         ),
       );
@@ -96,10 +96,12 @@ class _MultiNavigatorBottomBarState extends State<MultiNavigatorBottomBar> {
 
 class TabPageNavigator extends StatelessWidget {
   TabPageNavigator(
-      {@required this.navigatorKey, @required this.initPage, this.pageRoute});
+      {@required this.navigatorKey,
+      @required this.initPageBuilder,
+      this.pageRoute});
 
   final GlobalKey<NavigatorState> navigatorKey;
-  final Widget initPage;
+  final WidgetBuilder initPageBuilder;
   final PageRoute pageRoute;
 
   @override
@@ -116,5 +118,5 @@ class TabPageNavigator extends StatelessWidget {
       );
 
   WidgetBuilder _defaultPageRouteBuilder(String routName, {String heroTag}) =>
-      (context) => initPage;
+      (context) => initPageBuilder(context);
 }
