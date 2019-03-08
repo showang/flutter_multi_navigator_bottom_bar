@@ -109,6 +109,7 @@ class TabPageNavigator extends StatelessWidget {
         onGenerateRoute: (routeSettings) =>
             pageRoute ??
             MaterialPageRoute(
+              settings: RouteSettings(isInitialRoute: true),
               builder: (context) =>
                   _defaultPageRouteBuilder(routeSettings.name)(context),
             ),
