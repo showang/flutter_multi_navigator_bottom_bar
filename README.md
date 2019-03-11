@@ -13,7 +13,7 @@ class _MyHomePageState extends State<MyHomePage> {
   var tabs = List.generate(
     tabSize,
     (index) => BottomBarTab(
-          initPage: Page(index.toString()),
+          initPageBuilder: (_) => Page(index.toString()),
           tabIconBuilder: (_) => Icon(Icons.add),
           tabTitleBuilder: (_) => Text("Tab ${index.toString()}"),
         ),
@@ -49,7 +49,7 @@ Add this to your package's pubspec.yaml file:
 
 ```yaml
 dependencies:
-  multi_navigator_bottom_bar: ^0.0.7
+  multi_navigator_bottom_bar: {last_version}
 ```
 
 ## 2. Install it
@@ -73,3 +73,7 @@ Now in your Dart code, you can use:
 ```dart
 import 'package:multi_navigator_bottom_bar/multi_navigator_bottom_bar.dart';
 ```
+
+# Thanks for contribute
+
+[Zonble](https://github.com/zonble), [DCrow](https://github.com/DCrow) 
