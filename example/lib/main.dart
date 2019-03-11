@@ -24,6 +24,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  bool isPopLocking = false;
   static final tabSize = 4;
   var tabs = List.generate(
     tabSize,
@@ -40,6 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
         initTabIndex: 0,
         pageWidgetDecorator: pageDecorator,
         tabs: tabs,
+        shouldHandlePop: () => !isPopLocking,
       );
 
   Widget pageDecorator(pageWidget) => Column(
@@ -49,9 +51,19 @@ class _MyHomePageState extends State<MyHomePage> {
             alignment: AlignmentDirectional.center,
             height: 48.0,
             color: Colors.black,
-            child: Text(
-              "PageWidgetDecorator",
-              style: TextStyle(color: Colors.white),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Text(
+                    "[PageWidgetDecorator] isPopLocking? $isPopLocking",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+                MaterialButton(
+                  child: Text(isPopLocking ? "Unlock" : "Lock"),
+                  onPressed: () => setState(() => isPopLocking = !isPopLocking),
+                )
+              ],
             ),
           )
         ],

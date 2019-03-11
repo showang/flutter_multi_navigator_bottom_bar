@@ -28,6 +28,7 @@ class MultiNavigatorBottomBar extends StatefulWidget {
   final BottomNavigationBarType type;
   final Color fixedColor;
   final double iconSize;
+  final ValueGetter shouldHandlePop;
 
   MultiNavigatorBottomBar({
     @required this.initTabIndex,
@@ -38,7 +39,10 @@ class MultiNavigatorBottomBar extends StatefulWidget {
     this.type,
     this.fixedColor,
     this.iconSize = 24.0,
+    this.shouldHandlePop = _defaultShouldHandlePop,
   });
+
+  static bool _defaultShouldHandlePop() => true;
 
   @override
   State<StatefulWidget> createState() =>
@@ -52,9 +56,11 @@ class _MultiNavigatorBottomBarState extends State<MultiNavigatorBottomBar> {
 
   @override
   Widget build(BuildContext context) => WillPopScope(
-        onWillPop: () async => !await widget
-            .tabs[currentIndex]._navigatorKey.currentState
-            .maybePop(),
+        onWillPop: () async {
+          return widget.shouldHandlePop() ? !await widget
+              .tabs[currentIndex]._navigatorKey.currentState
+              .maybePop() : false;
+        },
         child: Scaffold(
           body: widget.pageWidgetDecorator == null
               ? _buildPageBody()
