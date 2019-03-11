@@ -28,7 +28,7 @@ class _MyHomePageState extends State<MyHomePage> {
   var tabs = List.generate(
     tabSize,
     (index) => BottomBarTab(
-          initPage: Page(index.toString()),
+          initPageBuilder: (_) => Page(index.toString()),
           tabIconBuilder: (_) => Icon(Icons.add),
           tabTitleBuilder: (_) => Text("Tab ${index.toString()}"),
         ),
